@@ -1,0 +1,3 @@
+[submodule "Intro/Newsletter-signup"]
+	path = Intro/Newsletter-signup
+	url = https://github.com/marovichn/backend-newsletter-project.git
