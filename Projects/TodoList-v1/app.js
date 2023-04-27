@@ -2,7 +2,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const app = express();
-let todoItem = [];
+let day = "";
+let todoItems = [];
+let workItems = [];
 app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,7 +19,17 @@ app.get("/", function (req, res) {
   };
   day = today.toLocaleDateString("en-US", options);
 
-  res.render("list.ejs", { kindOfDay: day, addedToDos: todoItem });
+  res.render("list.ejs", { title: day, addedToDos: todoItems });
+});
+
+app.get("/work", function (req, res) {
+  res.render("list.ejs", { title: "Work", addedToDos: workItems });
+});
+
+app.post("/work", function (req, res) {
+  const newWorkItem = req.body.newItem;
+  workItems.push(newWorkItem);
+  res.redirect("/work");
 });
 
 app.listen(3000, function () {
@@ -25,6 +37,6 @@ app.listen(3000, function () {
 });
 
 app.post("/", (req, res) => {
-  todoItem.push(req.body.newItem);
+  todoItems.push(req.body.newItem);
   res.redirect("/");
 });
