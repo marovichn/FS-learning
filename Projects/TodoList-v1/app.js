@@ -24,12 +24,18 @@ app.get("/", function (req, res) {
 
 app.post("/", (req, res) => {
   let item = req.body.newItem;
-  if (req.body.list === "Work") {
-    workItems.push(item);
+  if (item.trim().length === 0 && req.body.list === "Work") {
     res.redirect("/work");
-  } else {
-    todoItems.push(item);
+  } else if (item.trim().length === 0 && req.body.list !== "Work"){
     res.redirect("/");
+  }else {
+    if (req.body.list === "Work") {
+      workItems.push(item);
+      res.redirect("/work");
+    } else {
+      todoItems.push(item);
+      res.redirect("/");
+    }
   }
 });
 
