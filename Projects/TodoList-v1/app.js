@@ -4,8 +4,8 @@ const date = require(__dirname + "/date.js");
 
 const app = express();
 let day = "";
-let todoItems = [];
-let workItems = [];
+const todoItems = [];
+const workItems = [];
 app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
