@@ -3,8 +3,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const _ = require("lodash");
 
-const posts = [];
+const posts = [
+  {
+    title: "test",
+    post: "t amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae",
+  },
+];
 
 const homeStartingContent =
   "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
@@ -23,8 +29,8 @@ app.use(express.static("public"));
 app.get("/", (req, res) => {
   res.render("home", {
     startingContent: homeStartingContent,
+    postsList: posts,
   });
-  console.log(posts);
 });
 
 app.get("/about", (req, res) => {
@@ -53,9 +59,12 @@ app.get("/compose", (req, res) => {
 });
 
 app.post("/compose", (req, res) => {
-  if (!req.body.title || req.body.title.trim().length === 0) {
+  if (!req.body.composedTitle || req.body.composedTitle.trim().length === 0) {
     res.redirect("/error");
-  } else if (!req.body.post || req.body.post.trim().length === 0) {
+  } else if (
+    !req.body.composedPost ||
+    req.body.composedPost.trim().length === 0
+  ) {
     res.redirect("/error");
   } else {
     const composedText = {
@@ -64,6 +73,23 @@ app.post("/compose", (req, res) => {
     };
     posts.push(composedText);
     res.redirect("/");
+  }
+});
+
+app.get("/posts/:postId", (req, res) => {
+  if (!posts) {
+    res.redirect("/");
+  } else {
+    posts.forEach((p) => {
+      if (_.lowerCase(p.title) === _.lowerCase(req.params.postId)) {
+        res.render("post.ejs", {
+          title: p.title,
+          post: p.post,
+        });
+      } else {
+        res.redirect("/");
+      }
+    });
   }
 });
 

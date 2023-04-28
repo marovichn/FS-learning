@@ -75,3 +75,7 @@ textarea{
 #errorfoot{
     background-color: maroon;
 }
+
+.post{
+    margin:50px auto;
+}
