@@ -10,6 +10,14 @@ const posts = [
     title: "test",
     post: "t amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae",
   },
+  {
+    title: "test2",
+    post: "t amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae",
+  },
+  {
+    title: "test3",
+    post: "t amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae",
+  },
 ];
 
 const homeStartingContent =
@@ -77,20 +85,18 @@ app.post("/compose", (req, res) => {
 });
 
 app.get("/posts/:postId", (req, res) => {
-  if (!posts) {
-    res.redirect("/");
-  } else {
-    posts.forEach((p) => {
-      if (_.lowerCase(p.title) === _.lowerCase(req.params.postId)) {
-        res.render("post.ejs", {
-          title: p.title,
-          post: p.post,
-        });
-      } else {
-        res.redirect("/");
-      }
-    });
-  }
+const reqTitle = _.lowerCase(req.params.postId);
+
+  posts.forEach((p) => {
+    const storedTitle = _.lowerCase(p.title);
+
+    if (storedTitle === reqTitle) {
+      res.render("post.ejs", {
+        title: p.title,
+        post: p.post,
+      });
+    } 
+  });
 });
 
 app.listen(3000, function () {
