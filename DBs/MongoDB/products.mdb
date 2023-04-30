@@ -1,0 +1,23 @@
+db.products.updateOne(
+    {_id:1},
+    { $set:
+        {
+            _id: 1 ,
+            name: "Pen",
+            price: 1.2,
+            stock:32,
+            reviews:[
+                {
+                    author: "John",
+                    rating: 3.5,
+                    rewiew:"Cool",
+                },
+                {
+                    author: "Marry",
+                    rating:4.5,
+                    rewiew:"Cooler",
+                },
+            ],
+        }
+    }
+)
