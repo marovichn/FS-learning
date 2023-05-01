@@ -1,28 +1,34 @@
-const express = require("express");
-const app = express();
+const { MongoClient } = require("mongodb");
 
-const MongoClient = require("mongodb").MongoClient;
-const assert = require("assert");
+const uri = "mongodb://127.0.0.1:27017/";
 
-const url = "mongodb://localhost:27017";
+const client = new MongoClient(uri, { useUnifiedTopology: true });
 
-const dbName = "fruitsDB";
+async function run() {
+  try {
+    await client.connect();
 
-const client = new MongoClient(url);
+    console.log("Connected Successfully to server");
 
-client.connect((err) => {
-  assert.equal(null, err);
-  console.log("Connected succesfully");
+    const db = client.db("fruitsDB");
 
-  const db = client.db(dbName);
-
-  client.close();
-});
-
-app.get("/", () => {
-  
-});
-
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+    await db.collection("fruits").insertMany(
+      [
+        { _id: 2, name: "Orange", qty: 20, score: 8, review: "Great!!" },
+        { _id: 3, name: "Banana", qty: 30, score: 8, review: "Great!!" },
+        { _id: 4, name: "Apple", qty: 15, score: 8, review: "Great!!" },
+      ],
+      function (error, doc) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("success");
+        }
+        db.close();
+      }
+    );
+  } finally {
+    await client.close();
+  }
+}
+run().catch(console.dir);
