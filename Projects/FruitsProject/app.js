@@ -1,34 +1,43 @@
-const { MongoClient } = require("mongodb");
-
-const uri = "mongodb://127.0.0.1:27017/";
-
-const client = new MongoClient(uri, { useUnifiedTopology: true });
+const mongoose = require("mongoose");
 
 async function run() {
   try {
-    await client.connect();
+    await mongoose.connect("mongodb://127.0.0.1:27017/fruitsDB");
 
-    console.log("Connected Successfully to server");
+    console.log("success");
 
-    const db = client.db("fruitsDB");
+    const fruitSchema = new mongoose.Schema({
+      name: String,
+      rating: Number,
+      review: String,
+    });
 
-    await db.collection("fruits").insertMany(
-      [
-        { _id: 2, name: "Orange", qty: 20, score: 8, review: "Great!!" },
-        { _id: 3, name: "Banana", qty: 30, score: 8, review: "Great!!" },
-        { _id: 4, name: "Apple", qty: 15, score: 8, review: "Great!!" },
-      ],
-      function (error, doc) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("success");
-        }
-        db.close();
-      }
-    );
-  } finally {
-    await client.close();
+    const Fruit = mongoose.model("Fruit", fruitSchema);
+
+    const fruit = new Fruit({
+      name: "Apple",
+      rating: 10,
+      review: "Fenomenal"
+    });
+
+    //fruit.save();
+
+    const peopleSchema = mongoose.Schema({
+      name: String,
+      age: Number,
+    })
+
+    const People = mongoose.model("People", peopleSchema);
+
+    const people1 = new People({
+      name: "Joe",
+      age: 32,
+    })
+
+    people1.save();
+
+  } catch (err) {
+    console.log(err);
   }
 }
 run().catch(console.dir);
