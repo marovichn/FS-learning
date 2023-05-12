@@ -94,3 +94,16 @@ footer {
   color: rgba(0, 0, 0, 0.5);
   text-align: center;
 }
+
+#link{
+   background-color: #a683e3;
+  padding: 10px;
+  text-align: center;
+}
+
+#link a{
+  text-decoration: none;
+ color: white;
+ font-weight: bold;
+ font-size: 18px;
+}

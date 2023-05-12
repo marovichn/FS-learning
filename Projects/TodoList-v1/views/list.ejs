@@ -19,5 +19,7 @@
         />
         <button value=<%=title%> type="submit" name="list">+</button>
       </form>
+      <div id="link"><a  href=<%=type === "work" ? "/" : "/work"%> ><%=type === "work" ? "Daily" : "Work"%> List</a></div>
+      
     </div>
 <%- include("footer") -%>

@@ -14,16 +14,16 @@ app.use(express.static("public"));
 app.get("/", function (req, res) {
   const day = date.getDay();
 
-  res.render("list.ejs", { title: day, addedToDos: todoItems });
+  res.render("list.ejs", { title: day, addedToDos: todoItems, type: "date" });
 });
 
 app.post("/", (req, res) => {
   let item = req.body.newItem;
   if (item.trim().length === 0 && req.body.list === "Work") {
     res.redirect("/work");
-  } else if (item.trim().length === 0 && req.body.list !== "Work"){
+  } else if (item.trim().length === 0 && req.body.list !== "Work") {
     res.redirect("/");
-  }else {
+  } else {
     if (req.body.list === "Work") {
       workItems.push(item);
       res.redirect("/work");
@@ -38,6 +38,7 @@ app.get("/work", function (req, res) {
   res.render("list.ejs", {
     title: "Work",
     addedToDos: workItems,
+    type: "work"
   });
 });
 
@@ -47,11 +48,11 @@ app.post("/work", function (req, res) {
   res.redirect("/work");
 });
 
-app.get("/about", (req,res)=>{
+app.get("/about", (req, res) => {
   res.render("about.ejs", {
     title: "About",
-  })
-})
+  });
+});
 
 app.get("/compose", (req, res) => {
   res.render("compose.ejs", {
