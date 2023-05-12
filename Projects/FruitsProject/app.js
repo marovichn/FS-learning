@@ -34,6 +34,12 @@ async function run() {
       rating: 9,
       review: "Fenomenallll"
     });
+    
+    const apple = new Fruit({
+      name: "apple",
+      rating: 9,
+      review: "Fenomenallll"
+    });
 
     const person1 = new People({
       name: "Joe",
@@ -41,9 +47,16 @@ async function run() {
       favoriteFruit: Pineapple,
     })
 
+    await People.updateOne({ _id: "645ea43ce22548c03c7e8053" },{favoriteFruit: apple});
+
+    await People.deleteOne({ _id: "645ea43ce22548c03c7e8052" });
+
+    console.log(await People.find());
+
+
+
     /* Pineapple.save();
     person1.save(); */
-
 
    /* await People.insertMany([people1, people2]); */
 /* 
