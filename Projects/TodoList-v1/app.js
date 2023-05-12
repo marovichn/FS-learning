@@ -1,37 +1,68 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const date = require(__dirname + "/date.js");
+const mongoose = require("mongoose");
 
 const app = express();
-let day = "";
-const todoItems = [];
-const workItems = [];
-app.set("view engine", "ejs");
 
+app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.get("/", function (req, res) {
-  const day = date.getDay();
+mongoose.connect("mongodb://127.0.0.1:27017/TodoDB").catch(err=>console.log(err));
 
-  res.render("list.ejs", { title: day, addedToDos: todoItems, type: "date" });
+const TodoSchema = new mongoose.Schema({
+  value: {
+    type:String,
+    required: true,
+  }
+})
+
+const Todo = new mongoose.model("Todo", TodoSchema);
+
+const todo1 = new Todo({
+  value: "Wake Up"
+})
+const todo2 = new Todo({
+  value: "Wake Up"
+})
+const todo3 = new Todo({
+  value: "Wake Up"
+})
+const defaultTodos = [todo1,todo2, todo3];
+
+
+app.get("/", function (req, res) {
+const read = async() =>{
+  const allTodos = await Todo.find();
+  if (allTodos.length === 0) {
+    await Todo.insertMany(defaultTodos);
+  }
+  const dbTodos =[];
+  allTodos.forEach(todo=>dbTodos.push(todo.value));
+  res.render("list.ejs", { title: "Today", addedToDos: dbTodos, type: "date" });
+}
+read().catch(err=>console.log(err));
 });
 
 app.post("/", (req, res) => {
   let item = req.body.newItem;
-  if (item.trim().length === 0 && req.body.list === "Work") {
+  const add =async()=>{
+  if (item.trim().length === 0 && req.body.list === "Work")
+  {
     res.redirect("/work");
-  } else if (item.trim().length === 0 && req.body.list !== "Work") {
-    res.redirect("/");
-  } else {
-    if (req.body.list === "Work") {
-      workItems.push(item);
-      res.redirect("/work");
-    } else {
-      todoItems.push(item);
-      res.redirect("/");
-    }
   }
+  else if (item.trim().length === 0 && req.body.list !== "Work")
+  {
+    res.redirect("/");
+  } else
+  {
+    const newItem = new Todo({value: item});
+    await newItem.save();
+    res.redirect("/");
+  }
+};
+add().catch(err=>console.log(err));
+  
 });
 
 app.get("/work", function (req, res) {
@@ -54,11 +85,6 @@ app.get("/about", (req, res) => {
   });
 });
 
-app.get("/compose", (req, res) => {
-  res.render("compose.ejs", {
-    title: "Compose",
-  });
-});
 
 app.listen(3000, function () {
   console.log("Server started on port 3000.");
