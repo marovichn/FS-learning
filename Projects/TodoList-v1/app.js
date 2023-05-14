@@ -30,6 +30,12 @@ const todo3 = new Todo({
 })
 const defaultTodos = [todo1,todo2, todo3];
 
+const listSchema =  new mongoose.Schema({
+name:String,
+items: [TodoSchema]
+})
+
+const List = new mongoose.model("List", listSchema);
 
 app.get("/", function (req, res) {
 const read = async() =>{
@@ -45,6 +51,7 @@ read().catch(err=>console.log(err));
 
 app.post("/", (req, res) => {
   let item = req.body.newItem;
+  const listName = req.body.list;
   const add =async()=>{
   if (item.trim().length === 0 && req.body.list === "Work")
   {
@@ -56,21 +63,45 @@ app.post("/", (req, res) => {
   } else
   {
     const newItem = new Todo({value: item});
-    await newItem.save();
+    if(listName === "Today"){
+      await newItem.save();
     res.redirect("/");
+    }else{
+      const customList =await List.findOne({name: listName});
+      customList.items.push(newItem);
+      customList.save();
+      res.redirect("/" + listName);
+    }
   }
 };
 add().catch(err=>console.log(err));
   
 });
 
-app.get("/work", function (req, res) {
-  res.render("list.ejs", {
-    title: "Work",
-    addedToDos: workItems,
-    type: "work"
-  });
+app.get("/:listType",(req,res)=>{
+const listType = req.params.listType;
+
+const run =async()=>{
+const storedList = await List.findOne({name:listType});
+if(!storedList){
+  const list = new List({
+  name: listType,
+  items:defaultTodos,
 });
+
+await list.save();
+res.redirect("/" + listType);
+}else{
+res.render("list.ejs", {
+  title: listType,
+  addedToDos: storedList.items,
+  type: listType,
+});
+}
+
+};
+run().catch(err=>console.log(err));
+})
 
 app.post("/work", function (req, res) {
   const newWorkItem = req.body.newItem;
@@ -91,7 +122,7 @@ app.post("/delete",(req,res)=>{
   await Todo.deleteMany({_id: checkedItemId});
   res.redirect("/");
   };
-  del().catch(err=>console.log(err));
+  del().catch(err=>console.log(err))
   
 });
 
