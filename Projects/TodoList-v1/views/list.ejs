@@ -1,25 +1,29 @@
 <%- include("header") -%>
-    <div class="box" id="heading">
-      <h1><%= title %> List</h1>
-    </div>
-    <div class="box">
-      <% for(let i = 0; i< addedToDos.length; i++){ %>
+
+  <div class="box" id="heading">
+    <h1> <%= title %> </h1>
+  </div>
+
+  <div class="box">
+
+
+  <%  addedToDos.forEach(function(item){ %>
+
+    <form action="/delete" method="post">
       <div class="item">
-        <input type="checkbox" />
-        <p><%= addedToDos[i] %></p>
+        <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="this.form.submit()">
+        <p><%= item.value %></p>
       </div>
-      <% }; %>
+      <input type="hidden" name="listName" value="<%= title %>"></input>
+    </form>
+  <%  }) %>
+
 
       <form class="item" action="/" method="post">
-        <input
-          type="text"
-          name="newItem"
-          placeholder="Add New Item"
-          autocomplete="off"
-        />
-        <button value=<%=title%> type="submit" name="list">+</button>
+        <input type="text" name="newItem" placeholder="New Item" autocomplete="off">
+        <button type="submit" name="list" value="<%= title %>">+</button>
       </form>
       <div id="link"><a  href=<%=type === "work" ? "/" : "/work"%> ><%=type === "work" ? "Daily" : "Work"%> List</a></div>
-      
+
     </div>
 <%- include("footer") -%>

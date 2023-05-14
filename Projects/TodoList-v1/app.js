@@ -34,12 +34,11 @@ const defaultTodos = [todo1,todo2, todo3];
 app.get("/", function (req, res) {
 const read = async() =>{
   const allTodos = await Todo.find();
+  const todos = [...allTodos];
   if (allTodos.length === 0) {
     await Todo.insertMany(defaultTodos);
   }
-  const dbTodos =[];
-  allTodos.forEach(todo=>dbTodos.push(todo.value));
-  res.render("list.ejs", { title: "Today", addedToDos: dbTodos, type: "date" });
+  res.render("list.ejs", { title: "Today", addedToDos: todos, type: "date" });
 }
 read().catch(err=>console.log(err));
 });
@@ -83,6 +82,17 @@ app.get("/about", (req, res) => {
   res.render("about.ejs", {
     title: "About",
   });
+});
+
+app.post("/delete",(req,res)=>{
+  const checkedItemId = req.body.checkbox;
+  
+  const del =async()=>{
+  await Todo.deleteMany({_id: checkedItemId});
+  res.redirect("/");
+  };
+  del().catch(err=>console.log(err));
+  
 });
 
 
