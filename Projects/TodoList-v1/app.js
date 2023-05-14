@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const _ = require("lodash");
 
 const app = express();
 
@@ -20,13 +21,13 @@ const TodoSchema = new mongoose.Schema({
 const Todo = new mongoose.model("Todo", TodoSchema);
 
 const todo1 = new Todo({
-  value: "Wake Up"
+  value: "Welcome"
 })
 const todo2 = new Todo({
-  value: "Wake Up"
+  value: "Click + to add todos"
 })
 const todo3 = new Todo({
-  value: "Wake Up"
+  value: "<-- click here to delete!"
 })
 const defaultTodos = [todo1,todo2, todo3];
 
@@ -79,7 +80,7 @@ add().catch(err=>console.log(err));
 });
 
 app.get("/:listType",(req,res)=>{
-const listType = req.params.listType;
+const listType = _.capitalize(req.params.listType);
 
 const run =async()=>{
 const storedList = await List.findOne({name:listType});
@@ -117,10 +118,18 @@ app.get("/about", (req, res) => {
 
 app.post("/delete",(req,res)=>{
   const checkedItemId = req.body.checkbox;
+  const listName = req.body.listName;
   
   const del =async()=>{
-  await Todo.deleteMany({_id: checkedItemId});
+    if(listName==="Today"){
+      await Todo.deleteMany({_id: checkedItemId});
   res.redirect("/");
+    }else{
+      await List.findOneAndUpdate({name:listName},{$pull:{
+        items:{_id: checkedItemId}
+      }});
+      res.redirect("/" + listName);
+    }
   };
   del().catch(err=>console.log(err))
   
