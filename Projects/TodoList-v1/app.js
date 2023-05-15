@@ -3,13 +3,18 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const _ = require("lodash");
 
+const mongoCred= require("./private");
+
 const app = express();
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+const mongo_uri = "mongodb+srv://"+mongoCred.DB_USERNAME+":"+mongoCred.DB_PASSWORD+"@nikola.wojtt5i.mongodb.net/TodoDB";
 
-mongoose.connect("mongodb://127.0.0.1:27017/TodoDB").catch(err=>console.log(err));
+mongoose
+  .connect(mongo_uri)
+  .catch((err) => console.log(err));
 
 const TodoSchema = new mongoose.Schema({
   value: {
