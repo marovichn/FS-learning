@@ -16,6 +16,8 @@
 }
 
 .footer-padding {
+    position: relative;
+    margin-top: 25vh;
 	padding-bottom: 60px;
 }
 
