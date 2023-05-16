@@ -61,6 +61,37 @@ app.route("/articles").get((req, res) => {
     }
 });
 
+app.route("/articles/:articleName").get((req,res)=>{
+    try {
+      const articleName = req.params.articleName; 
+      const run = async () => {
+        const article = await Article.findOne({title: articleName });
+        res.send(article);
+      };
+      run().catch((err) => res.send(err));
+    } catch (err) {
+      res.send(err);
+    }
+}).put((req,res)=>{
+    try {
+      const run = async () => {
+       await Article.findOneAndUpdate(
+         { title: req.params.articleName },
+         {
+           title: req.body.title,
+           content: req.body.content,
+         },{
+            overwrite: true
+         }
+       );
+        res.send("Success!");
+      };
+      run().catch((err) => res.send(err));
+    } catch (err) {
+      res.send(err);
+    }
+})
+
 
 app.listen("3000", () => {
   console.log("Listening on 3000");
