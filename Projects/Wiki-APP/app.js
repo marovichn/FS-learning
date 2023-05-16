@@ -23,7 +23,7 @@ const articlesSchema = new mongoose.Schema({
 
 const Article = new mongoose.model("Article", articlesSchema);
 
-app.get("/articles", (req, res) => {
+app.route("/articles").get((req, res) => {
   try {
     const run = async () => {
       const articles = await Article.find();
@@ -33,9 +33,7 @@ app.get("/articles", (req, res) => {
   } catch (err) {
     res.send(err);
   }
-});
-
-app.post("/articles", (req, res) => {
+}).post((req, res) => {
  
   try {
     const run = async () => {
@@ -43,15 +41,26 @@ app.post("/articles", (req, res) => {
          title: req.body.title,
          content: req.body.content,
        });
-       const res = await newArticle.save();
-       res.send(res);
+       await newArticle.save();
+       res.send("Success");
     };
     run().catch((err) => res.send(err));
   } catch (err) {
     res.send(err);
   }
 
+}).delete((req,res)=>{
+    try {
+        const run = async () => {
+          await Article.deleteMany();
+          res.send("Success");
+        };
+        run().catch((err) => res.send(err));
+    } catch (err) {
+      res.send(err);
+    }
 });
+
 
 app.listen("3000", () => {
   console.log("Listening on 3000");
